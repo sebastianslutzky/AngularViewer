@@ -14,7 +14,11 @@ import {HttpClient} from '../../services/httpService';
 
 @Component({
   selector: 'menu-action',
-  template: `<li> <a class="dropdown-toggle"  data-toggle="dropdown" href="#">{{this.friendlyName}}</a></li>`,
+  template: `<li> 
+        <a class="menuLink noVeil"  href="#">
+            <span class="fa fa-fw fa-list fontAwesomeIcon"> </span>
+            <span class="menuLinkLabel">{{this.friendlyName}}</span>
+        </a></li>`,
   styles: ["a:hover { cursor: pointer; }"],
   encapsulation:ViewEncapsulation.None
 })

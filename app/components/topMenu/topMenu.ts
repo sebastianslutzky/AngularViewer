@@ -18,8 +18,11 @@ import "rxjs/add/operator/map" ;
 
 @Component({
   selector: 'top-menu', 
-  template: `<li><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{this.name}}</a>
-    <ul class="dropdown-menu">
+  template: `<li class="dropdown">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="javascript:;">
+            <span>{{this.name}}</span><span class="caret"></span>
+        </a>
+    <ul class="dropdown-menu scrollable-menu multi-level top-menu-contacts" role="menu">
         <div *ngFor="let menuItem of this.items" >
             <menuEntity [ResourceDescriptor]='menuItem' (onMenuEntityLoaded)="handleMenuLoaded($event)"></menuEntity>
         </div>
