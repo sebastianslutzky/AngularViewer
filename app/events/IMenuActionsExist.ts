@@ -1,0 +1,4 @@
+
+interface IMenuActionsExist{
+    count: number;
+}

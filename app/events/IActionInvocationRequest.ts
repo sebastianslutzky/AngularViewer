@@ -1,0 +1,4 @@
+
+interface IActionInvocationRequest{
+    actionName: string;
+}
