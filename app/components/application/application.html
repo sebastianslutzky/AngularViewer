@@ -14,16 +14,23 @@
             </ul>
             <div class="navbar-collapse app-actions collapse navbar-right">
               <ul class="nav navbar-nav secondary">
-                <ng-container *ngFor="let menu of topMenus[1]; let i = index;">
-                    <top-menu #topmenu (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
+                <ng-container  *ngFor="let menu of topMenus[1]; let i = index;">
+                    <top-menu [hidden]="true" #topmenu (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
                     </top-menu>
                 </ng-container>
               </ul>
               <ul class="nav navbar-nav tertiary">
                 <ng-container *ngFor="let menu of topMenus[2]; let i = index;">
-                  <top-menu #topmenu (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
+                  <top-menu #topmenu [hidden]="true" (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
                   </top-menu>
                 </ng-container>
+                <div hidden>
+             <ul class="nav navbar-nav hidden">
+                <ng-container *ngFor="let menu of unorderedMenus; let i = index;">
+              <top-menu #topmenu [hidden]="true" (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
+              </top-menu>
+                </ng-container>
+            </ul></div>
               </ul>
             </div>
           </div>

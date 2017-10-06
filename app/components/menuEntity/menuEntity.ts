@@ -45,7 +45,6 @@ export default class MenuEntityComponent{
                 numberOfSubmenues: asArray.length,
                 menuPosition:  this.getMenuBar(data)
             };
-
             this.onMenuEntityLoaded.emit(resourceLoaded);
             });
     }

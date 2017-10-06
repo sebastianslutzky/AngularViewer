@@ -33,6 +33,7 @@ export default class ApplicationComponent{
   pageResourceUrl: string= "http://localhost:8080/restful/services/";
 
   topMenus: Array<Array<string>>;
+  unorderedMenus: Array<string>;
 
   menuItems(menu: string){
     var ret =  this.menus[menu];
@@ -47,14 +48,12 @@ handleOnTopMenuObsolete(i: number){
 }
 
 handleOnMenuPositionKnown(position: number, i: number){
-  if(i > 1){
-    var toRelocate = this.topMenus[0].splice(i, 1);
-    if(position == 3){
-      console.log("rendering tertiary: " + toRelocate)
-    }
-    this.topMenus[position -1].push(toRelocate[0]);
+  if(position == 0)
+    return;
+
+    var ordered = this.unorderedMenus[i];
+    this.topMenus[position -1].push(ordered);
   }
-}
 
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
@@ -64,15 +63,8 @@ handleOnMenuPositionKnown(position: number, i: number){
       this.dataSource = this.http2.get(this.pageResourceUrl).map(res=>res.json());
   }
 /**
- * 1) loads services, turns them into this.menus and indexes it by unique name (topMenuCategories)
- * 2) renders each menucategory as an item in primary. 
- * 3) adds a topmenuentity for each entry in topMenuCategories/menus 
- * 
- * consider
- * 1) repeat 1 but add "bucket to the indexation". 
- *    - add a buckets[1-3] index when indexing
- *    - access with getPrimaryMenus(), getSecondaryMenus() etc
- *    - when raise obsolete event with bucket number
+ * 1 - add keys to another array (not rendered)
+ * 2 - when position is known, add to ther right array (no splicing)
  */
   ngOnInit(){
         this.topMenus = new Array<Array<string>>();
@@ -89,8 +81,8 @@ handleOnMenuPositionKnown(position: number, i: number){
           return r;
         },[]);
 
-        //determine what object E
-        this.topMenus[0] = Object.keys(this.menus);
+        var all = Object.keys(this.menus);
+        this.unorderedMenus = all;
     });
     
     var layoutResource = this.http2.get("")
