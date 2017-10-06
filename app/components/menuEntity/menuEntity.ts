@@ -9,6 +9,7 @@
 import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter} from '@angular/core';
 import {HttpClient} from '../../services/httpService';
 import {Observable} from "rxjs/Observable";
+import {IMenuResourceLoaded} from '../../events/IMenuResourceLoaded';
 
 @Component({
   selector: 'menuEntity', 
@@ -28,7 +29,7 @@ export default class MenuEntityComponent{
     constructor(private http: HttpClient){}
 
     @Output()
-    onMenuEntityLoaded: EventEmitter<IMenuActionsExist> = new EventEmitter();
+    onMenuEntityLoaded: EventEmitter<IMenuResourceLoaded> = new EventEmitter();
 
     ngOnInit(){
 
@@ -40,7 +41,29 @@ export default class MenuEntityComponent{
             let members = data.members;
             let asArray = Object.keys(members).map(function(k) {return members[k]});
             this.actions = asArray;
-            this.onMenuEntityLoaded.emit(this.actions.length);
+            let resourceLoaded: IMenuResourceLoaded = {
+                numberOfSubmenues: asArray.length,
+                menuPosition:  this.getMenuBar(data)
+            };
+
+            this.onMenuEntityLoaded.emit(resourceLoaded);
             });
+    }
+
+    getMenuBar(resource: any):number{
+        if(resource.extensions && resource.extensions.menuBar)
+        {
+            var menuBar = resource.extensions.menuBar
+            switch(menuBar){
+                case "PRIMARY":
+                    return 1
+                case "SECONDARY":
+                    return 2
+                case "TERTIARY":
+                    return 3
+            }
+            throw ("Unknown menuBar " + menuBar)
+
+        }
     }
 }

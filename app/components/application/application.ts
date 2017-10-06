@@ -32,7 +32,7 @@ export default class ApplicationComponent{
 
   pageResourceUrl: string= "http://localhost:8080/restful/services/";
 
-  topMenuCategories: Array<string>;
+  topMenus: Array<Array<string>>;
 
   menuItems(menu: string){
     var ret =  this.menus[menu];
@@ -43,7 +43,17 @@ export default class ApplicationComponent{
 
 
 handleOnTopMenuObsolete(i: number){
-  this.topMenuCategories.splice(i, 1);
+  this.topMenus[0].splice(i, 1);
+}
+
+handleOnMenuPositionKnown(position: number, i: number){
+  if(i > 1){
+    var toRelocate = this.topMenus[0].splice(i, 1);
+    if(position == 3){
+      console.log("rendering tertiary: " + toRelocate)
+    }
+    this.topMenus[position -1].push(toRelocate[0]);
+  }
 }
 
   constructor(public svc: FxService,
@@ -53,8 +63,23 @@ handleOnTopMenuObsolete(i: number){
 
       this.dataSource = this.http2.get(this.pageResourceUrl).map(res=>res.json());
   }
-
+/**
+ * 1) loads services, turns them into this.menus and indexes it by unique name (topMenuCategories)
+ * 2) renders each menucategory as an item in primary. 
+ * 3) adds a topmenuentity for each entry in topMenuCategories/menus 
+ * 
+ * consider
+ * 1) repeat 1 but add "bucket to the indexation". 
+ *    - add a buckets[1-3] index when indexing
+ *    - access with getPrimaryMenus(), getSecondaryMenus() etc
+ *    - when raise obsolete event with bucket number
+ */
   ngOnInit(){
+        this.topMenus = new Array<Array<string>>();
+        for(var i=0;i<3;i++){
+          this.topMenus.push(new Array<string>());
+        }
+
     this.dataSource.subscribe(data =>{
         this.menus = data.value;
         var allMenus: Array<any> = data.value;
@@ -64,7 +89,8 @@ handleOnTopMenuObsolete(i: number){
           return r;
         },[]);
 
-        this.topMenuCategories = Object.keys(this.menus);
+        //determine what object E
+        this.topMenus[0] = Object.keys(this.menus);
     });
     
     var layoutResource = this.http2.get("")
@@ -74,7 +100,6 @@ handleOnTopMenuObsolete(i: number){
     let catNames = this.menus.map(m => m.title);
     return Array.from(new Set(catNames));
   }
-
 
   invokeActionHandler(event: IActionInvocationRequest){
     //create EntityComponent and render here

@@ -14,6 +14,7 @@ import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter} from
 import {RouterModule, Routes} from '@angular/router';
 import { HttpClient } from '../../services/httpService';
 import {Observable} from "rxjs/Observable";
+import {IMenuResourceLoaded} from '../../events/IMenuResourceLoaded';
 import "rxjs/add/operator/map" ;
 
 @Component({
@@ -36,9 +37,13 @@ export default class TopMenuComponent{
     dataSource: Observable<any>;
     subMenues: number = 0;
     anythingLoaded: boolean;
+    positionKnown: boolean;
 
     @Output()
     onTopMenuObsolete: EventEmitter<number> = new EventEmitter();
+
+    @Output()
+    onMenuPositionKnown: EventEmitter<number> = new EventEmitter();
 
     @Input()
     name: string;
@@ -46,12 +51,21 @@ export default class TopMenuComponent{
     @Input()
     items: Array<any>;
 
-    handleMenuLoaded(event: number){
-        this.anythingLoaded = event > 0;
+
+
+    handleMenuLoaded(event: IMenuResourceLoaded){
+        this.anythingLoaded = event.numberOfSubmenues > 0;
         this.subMenues++;
-        if(this.subMenues === this.items.length && event ==0){
+        if(this.subMenues === this.items.length && event.numberOfSubmenues ==0){
             this.onTopMenuObsolete.emit();
         }
+
+        if(this.positionKnown){
+            console.info("position already known for " + this.name + " skipping onMenuPositionKnown event....")
+            return
+        }
+        this.positionKnown = true;
+        this.onMenuPositionKnown.emit(event.menuPosition);
     }
 
     constructor(private client: HttpClient){
