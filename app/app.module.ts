@@ -11,6 +11,7 @@ import EntityComponent from "./components/entity/entity";
 import FxService from "./services/fxService";
 import {Draggable} from '../node_modules/ng2draggable/draggable.directive';
 import { HttpClient } from './services/httpService';
+import ServiceMenuComponent from './components/serviceMenuComponent/serviceMenuComponent';
 
 @NgModule({
     imports:      [ BrowserModule , FormsModule, ReactiveFormsModule, HttpModule],
@@ -19,7 +20,7 @@ import { HttpClient } from './services/httpService';
                    {provide: LocationStrategy, useClass: HashLocationStrategy},
                    {provide: FxService, useClass: FxService},
                    {provide: HttpClient, useClass: HttpClient}],
-    entryComponents: [EntityComponent],
+    entryComponents: [EntityComponent,ServiceMenuComponent],
      bootstrap:    [ ApplicationComponent ]
 })
 export class AppModule { }

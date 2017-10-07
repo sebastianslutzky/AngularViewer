@@ -19,6 +19,8 @@ import {Http,HttpModule,Headers,RequestOptions,RequestMethod,RequestOptionsArgs}
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map" ;
 import { HttpClient } from '../../services/httpService';
+import ServiceMenuComponent from '../../components/serviceMenuComponent/serviceMenuComponent';
+import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 
 @Component({
   selector: 'auction-application', // <1>
@@ -27,34 +29,12 @@ import { HttpClient } from '../../services/httpService';
   encapsulation:ViewEncapsulation.None
 })
 export default class ApplicationComponent{ 
-  dataSource: Observable<any>; 
-  menus: any;
-
   pageResourceUrl: string= "http://localhost:8080/restful/services/";
-
-  topMenus: Array<Array<string>>;
-
-  menuItems(menu: string){
-    var ret =  this.menus[menu];
-    return ret;
-  }
-  //TO BE USED FOR ACTION RESULTS
-   @ViewChild('placeHolder', {read: ViewContainerRef}) private _placeHolder: ElementRef;
-
-
-handleOnTopMenuObsolete(i: number){
-  this.topMenus[0].splice(i, 1);
-}
-
-handleOnMenuPositionKnown(position: number, i: number){
-  if(i > 1){
-    var toRelocate = this.topMenus[0].splice(i, 1);
-    if(position == 3){
-      console.log("rendering tertiary: " + toRelocate)
-    }
-    this.topMenus[position -1].push(toRelocate[0]);
-  }
-}
+  dataSource: Observable<any>; 
+  @ViewChild('primaryMenu', {read: ViewContainerRef}) private _primaryMenu: ElementRef;
+  @ViewChild('secondaryMenu', {read: ViewContainerRef}) private _secondaryMenu: ElementRef;
+  @ViewChild('tertiaryMenu', {read: ViewContainerRef}) private _tertiaryMenu: ElementRef;
+  
 
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
@@ -63,61 +43,46 @@ handleOnMenuPositionKnown(position: number, i: number){
 
       this.dataSource = this.http2.get(this.pageResourceUrl).map(res=>res.json());
   }
-/**
- * 1) loads services, turns them into this.menus and indexes it by unique name (topMenuCategories)
- * 2) renders each menucategory as an item in primary. 
- * 3) adds a topmenuentity for each entry in topMenuCategories/menus 
- * 
- * consider
- * 1) repeat 1 but add "bucket to the indexation". 
- *    - add a buckets[1-3] index when indexing
- *    - access with getPrimaryMenus(), getSecondaryMenus() etc
- *    - when raise obsolete event with bucket number
- */
+
   ngOnInit(){
-        this.topMenus = new Array<Array<string>>();
-        for(var i=0;i<3;i++){
-          this.topMenus.push(new Array<string>());
-        }
-
     this.dataSource.subscribe(data =>{
-        this.menus = data.value;
-        var allMenus: Array<any> = data.value;
-        this.menus = allMenus.reduce(function(r,a){
-          r[a.title]= r[a.title]||[];
-          r[a.title].push(a);
-          return r;
-        },[]);
+      var menuResources: Array<any> = data.value;
+      for(var i=0;i<menuResources.length;i++){
+        this.addTopMenuIfNeeded(menuResources[i])
+        //create component dynamically
+        //var cp = this.createComponent(this._primaryMenu,ServiceMenuComponent,menuResources[i]) as ComponentRef<ServiceMenuComponent>
+         //this._primaryMenu.insert(cp.hostView);
+      }
 
-        //determine what object E
-        this.topMenus[0] = Object.keys(this.menus);
+      /**
+       * create method that
+       * 1) receives a resource
+       * 2) loads the resource
+       * 3) if it has menues, add, else don't
+       */
     });
-    
-    var layoutResource = this.http2.get("")
   }
 
-  menuCategories(){
-    let catNames = this.menus.map(m => m.title);
-    return Array.from(new Set(catNames));
+  addTopMenuIfNeeded(resource: any){
+    var ds = this.http2.get(resource.href).map(x=>x.json());
+    ds.subscribe(data=> {
+      //any submenu?
+      var parentMenu = this.chooseParentMenu(data);
+      let members = data.members;
+      let asArray = Object.keys(members).map(function(k) {return members[k]});
+      this.actions = asArray;
+      var cp = this.createComponent(parentMenu,ServiceMenuComponent,resource) as ComponentRef<ServiceMenuComponent>
+      parentMenu.insert(cp.hostView);
+    })
   }
 
-  invokeActionHandler(event: IActionInvocationRequest){
-    //create EntityComponent and render here
-    let resultEntity = this.svc.invokeRootAction(event.actionName);
-    if(resultEntity){
-      let cmp = this.createComponent(this._placeHolder, EntityComponent,resultEntity);
-      this._placeHolder.insert(cmp.hostView);
-    }
-  }
-
-  //TODO: Move to ComponentFactory service
   public createComponent (vCref: ViewContainerRef, type: any, inputData: any): ComponentRef {
-     let inputProviders = Object.keys(inputData).map((inputName) => {
-       return {
-         provide: inputName, useValue: inputData[inputName]};});
+      let inputProviders = Object.keys(inputData).map((inputName) => {
+        return {
+          provide: inputName, useValue: inputData[inputName]};});
       
-   let  resolvedInputs = ReflectiveInjector.resolve(inputProviders);
-   let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, 
+    let  resolvedInputs = ReflectiveInjector.resolve(inputProviders);
+    let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, 
         vCref.parentInjector);
 
     let factory = this._cmpFctryRslvr.resolveComponentFactory(type);
@@ -127,5 +92,23 @@ handleOnMenuPositionKnown(position: number, i: number){
 
     return comp;
   }
+
+  chooseParentMenu(resource: any):ElementRef{
+    if(resource.extensions && resource.extensions.menuBar)
+    {
+        var menuBar = resource.extensions.menuBar
+        switch(menuBar){
+            case "PRIMARY":
+                return this._primaryMenu ;
+            case "SECONDARY":
+                return this._secondaryMenu ;
+            case "TERTIARY":
+                return this._tertiaryMenu ;
+        }
+        throw ("Unknown menuBar " + menuBar)
+    }
+
 }
+
+
 

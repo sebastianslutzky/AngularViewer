@@ -1,4 +1,4 @@
-export interface IMenuResourceLoaded{
+ export default interface IMenuResourceLoaded{
    numberOfSubmenues: number; 
    menuPosition: number ;
 }

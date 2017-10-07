@@ -7,23 +7,48 @@
           </div>
           <div class="navbar-collapse app-actions collapse navbar-left" >
             <ul class="nav navbar-nav primary">
-                <ng-container *ngFor="let menu of topMenus[0]; let i = index;">
-              <top-menu #topmenu (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
-              </top-menu>
-                </ng-container>
+               <li class="dropdown">
+                  <a tabindex="-1" 
+                      href="javascript:;" 
+                      class="dropdown-toggle" 
+                      data-toggle="dropdown" >
+                      <span>Contacts</span> 
+                <span class="caret"></span></a>
+                <ul class="dropdown-menu scrollable-menu multi-level top-menu-contacts" role="menu">
+                <template #primaryMenu> </template>
+                </ul>
+              </li>
             </ul>
             <div class="navbar-collapse app-actions collapse navbar-right">
               <ul class="nav navbar-nav secondary">
-                <ng-container *ngFor="let menu of topMenus[1]; let i = index;">
-                    <top-menu #topmenu (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
-                    </top-menu>
-                </ng-container>
+
+               <li class="dropdown">
+                  <a tabindex="-1" 
+                      href="javascript:;" 
+                      class="dropdown-toggle" 
+                      data-toggle="dropdown" >
+                      <span>Security</span> 
+
+                <span class="caret"></span></a>
+                <ul class="dropdown-menu scrollable-menu multi-level top-menu-contacts" role="menu">
+                <template #secondaryMenu> </template>
               </ul>
+              </li>
+              </ul>
+
               <ul class="nav navbar-nav tertiary">
-                <ng-container *ngFor="let menu of topMenus[2]; let i = index;">
-                  <top-menu #topmenu (onTopMenuObsolete)="handleOnTopMenuObsolete(i)" (onMenuPositionKnown)="handleOnMenuPositionKnown($event,i)" [name]='menu' [items]='menuItems(menu)'>
-                  </top-menu>
-                </ng-container>
+               <li class="dropdown">
+                  <a tabindex="-1" 
+                      href="javascript:;" 
+                      class="dropdown-toggle" 
+                      data-toggle="dropdown" >
+                      <span>Hi User!</span> 
+
+                <span class="caret"></span></a>
+                <ul class="dropdown-menu scrollable-menu multi-level top-menu-contacts" role="menu">
+                <template #tertiaryMenu> </template>
+              </ul>
+              </li>
               </ul>
             </div>
           </div>
@@ -32,7 +57,7 @@
 </div>
 </div>
 TODO:WebsiteName
-      <template #placeHolder>
+      <template #desktop>
       </template>
 
       <app-footer></app-footer>
