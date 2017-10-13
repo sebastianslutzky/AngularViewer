@@ -14,9 +14,13 @@ import {IMenuResourceLoaded} from '../../events/IMenuResourceLoaded';
 @Component({
   selector: 'service-menu-component', 
   template: `
+<div [hidden]="hidden">
   <div  *ngFor="let action of this.actions">
-  <menu-action #ma [hidden]="hidden"[ResourceDescriptor]='action'></menu-action>
-</div>` ,
+  <menu-action #ma [ResourceDescriptor]='action'></menu-action>
+</div>
+    <li class="divider"></li>
+</div>
+` ,
   encapsulation:ViewEncapsulation.None
 })
 export default class ServiceMenuComponent{
@@ -25,31 +29,36 @@ export default class ServiceMenuComponent{
     @Input()
     hidden: boolean;
     dataSource: Observable<any>; 
-    actions: Array<any>;
     @Output()
     onMenuEntityLoaded: EventEmitter<IMenuResourceLoaded> = new EventEmitter();
+    action: Array<any>;
 
     constructor(public injector: Injector, public http: HttpClient){
+        this.hidden = true;
         //todo: get friendly name when resource loaded
         this.friendlyName = this.injector.get("title");
         this.href = this.injector.get("href");
         this.dataSource = this.http.get(this.href).map(x=>x.json());
+        //get resource & described by
+        this.dataSource.subscribe(data=>
+        {
+            let members = data.members;
+            let asArray = Object.keys(members).map(function(k) {return members[k]});
+            this.actions = asArray;
 
-              //get resource & described by
-              this.dataSource.subscribe(data=>
-                {
-                let members = data.members;
-                let asArray = Object.keys(members).map(function(k) {return members[k]});
-                this.actions = asArray;
+            let resourceLoaded: IMenuResourceLoaded = {
+                numberOfSubmenues: asArray.length,
+                menuPosition:  this.getMenuBar(data)
+            };
 
-                let resourceLoaded: IMenuResourceLoaded = {
-                    numberOfSubmenues: asArray.length,
-                    menuPosition:  this.getMenuBar(data)
-                };
-    
-                this.onMenuEntityLoaded.emit(resourceLoaded);
-                });
+            if(this.actions.length > 0){
+                this.hidden = false;
+            }
+
+            this.onMenuEntityLoaded.emit(resourceLoaded);
+        });
     }
+
 
     getMenuBar(resource: any):number{
         if(resource.extensions && resource.extensions.menuBar)
@@ -65,4 +74,5 @@ export default class ServiceMenuComponent{
             }
             throw ("Unknown menuBar " + menuBar)
         }
+    }
 }
