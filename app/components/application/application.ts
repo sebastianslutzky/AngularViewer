@@ -13,14 +13,13 @@
 
 import {Component, ViewEncapsulation,ViewChild,ViewChildren,ElementRef,ComponentRef, 
   ViewContainerRef,ReflectiveInjector,ComponentFactoryResolver} from '@angular/core';
-import EntityComponent from "../../components/entity/entity" ;
 import FxService from  "../../services/fxService";
 import {Http,HttpModule,Headers,RequestOptions,RequestMethod,RequestOptionsArgs} from "@angular/http";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map" ;
 import { HttpClient } from '../../services/httpService';
-import ServiceMenuComponent from '../../components/serviceMenuComponent/serviceMenuComponent';
 import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
+import MenuBarComponent from '../../components/menuBar/menuBar';
 
 @Component({
   selector: 'auction-application', // <1>
@@ -34,9 +33,9 @@ export default class ApplicationComponent{
 
   dataSource: Observable<any>; 
   userNameSource: Observable<any>; 
-  @ViewChild('primaryMenu', {read: ViewContainerRef}) private _primaryMenu: ElementRef;
-  @ViewChild('secondaryMenu', {read: ViewContainerRef}) private _secondaryMenu: ElementRef;
-  @ViewChild('tertiaryMenu', {read: ViewContainerRef}) private _tertiaryMenu: ElementRef;
+  @ViewChild('primaryMenu') private _primaryMenu: MenuBarComponent;
+  @ViewChild('secondaryMenu') private _secondaryMenu: MenuBarComponent;
+  @ViewChild('tertiaryMenu') private _tertiaryMenu: MenuBarComponent;
   private topMenuNames:{[key:string]:string;} ={}
   private userFirstName: string;
   
@@ -47,12 +46,12 @@ export default class ApplicationComponent{
 
       this.dataSource = this.http2.get(this.pageResourceUrl).map(res=>res.json());
       this.userNameSource = this.http2.get(this.userNameUrl).map(res=>res.json());
-
   }
 
   ngOnInit(){
     this.dataSource.subscribe(data =>{
       var menuResources: Array<any> = data.value;
+
       for(var i=0;i<menuResources.length;i++){
         this.addTopMenuIfNeeded(menuResources[i])
       }
@@ -66,37 +65,16 @@ export default class ApplicationComponent{
   addTopMenuIfNeeded(resource: any){
     var ds = this.http2.get(resource.href).map(x=>x.json());
     ds.subscribe(data=> {
-      var parentMenu = this.chooseParentMenu(data);
-      let members = data.members;
-      let asArray = Object.keys(members).map(function(k) {return members[k]});
-      this.actions = asArray;
-      var cp = this.createComponent(parentMenu,ServiceMenuComponent,resource) as ComponentRef<ServiceMenuComponent>
-      parentMenu.insert(cp.hostView);
+      let asArray = Object.keys(data.members).map(function(k) {return data.members[k]});
+
+      if(asArray.length > 1)
+      {
+        this.chooseParentMenu(data).addSection(resource)
+      }
     })
   }
 
-  private setMenuHeader(name: string){
-    this.topMenuNames[name]="name"
-  }
-
-  public createComponent (vCref: ViewContainerRef, type: any, inputData: any): ComponentRef {
-      let inputProviders = Object.keys(inputData).map((inputName) => {
-        return {
-          provide: inputName, useValue: inputData[inputName]};});
-      
-    let  resolvedInputs = ReflectiveInjector.resolve(inputProviders);
-    let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, 
-        vCref.parentInjector);
-
-    let factory = this._cmpFctryRslvr.resolveComponentFactory(type);
-
-    // create component without adding it directly to the DOM
-    let comp = factory.create(injector);
-
-    return comp;
-  }
-
-  chooseParentMenu(resource: any):ElementRef{
+  chooseParentMenu(resource: any):MenuBarComponent{
     if(resource.extensions && resource.extensions.menuBar)
     {
         var menuBar = resource.extensions.menuBar

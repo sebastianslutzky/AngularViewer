@@ -7,11 +7,9 @@ import { ReactiveFormsModule} from '@angular/forms';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {myComponents} from "./componentList";
 import ApplicationComponent from "./components/application/application";
-import EntityComponent from "./components/entity/entity";
 import FxService from "./services/fxService";
 import {Draggable} from '../node_modules/ng2draggable/draggable.directive';
 import { HttpClient } from './services/httpService';
-import ServiceMenuComponent from './components/serviceMenuComponent/serviceMenuComponent';
 
 @NgModule({
     imports:      [ BrowserModule , FormsModule, ReactiveFormsModule, HttpModule],
@@ -20,7 +18,6 @@ import ServiceMenuComponent from './components/serviceMenuComponent/serviceMenuC
                    {provide: LocationStrategy, useClass: HashLocationStrategy},
                    {provide: FxService, useClass: FxService},
                    {provide: HttpClient, useClass: HttpClient}],
-    entryComponents: [EntityComponent,ServiceMenuComponent],
      bootstrap:    [ ApplicationComponent ]
 })
 export class AppModule { }
