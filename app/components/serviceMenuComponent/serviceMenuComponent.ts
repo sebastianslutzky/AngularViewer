@@ -33,7 +33,6 @@ export default class ServiceMenuComponent{
         //todo: get friendly name when resource loaded
         this.friendlyName = this.injector.get("title");
         this.href = this.injector.get("href");
-          console.log("on serviceMenuComponent constructor " + this.friendlyName)
         this.dataSource = this.http.get(this.href).map(x=>x.json());
 
               //get resource & described by

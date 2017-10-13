@@ -30,18 +30,24 @@ import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 })
 export default class ApplicationComponent{ 
   pageResourceUrl: string= "http://localhost:8080/restful/services/";
+  userNameUrl: string= "http://localhost:8080/restful/services/isissecurity.MeService/actions/me/invoke";
+
   dataSource: Observable<any>; 
+  userNameSource: Observable<any>; 
   @ViewChild('primaryMenu', {read: ViewContainerRef}) private _primaryMenu: ElementRef;
   @ViewChild('secondaryMenu', {read: ViewContainerRef}) private _secondaryMenu: ElementRef;
   @ViewChild('tertiaryMenu', {read: ViewContainerRef}) private _tertiaryMenu: ElementRef;
+  private topMenuNames:{[key:string]:string;} ={}
+  private userFirstName: string;
   
-
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
               private http: Http,public http2: HttpClient){
       var invocation = new XMLHttpRequest();
 
       this.dataSource = this.http2.get(this.pageResourceUrl).map(res=>res.json());
+      this.userNameSource = this.http2.get(this.userNameUrl).map(res=>res.json());
+
   }
 
   ngOnInit(){
@@ -49,24 +55,17 @@ export default class ApplicationComponent{
       var menuResources: Array<any> = data.value;
       for(var i=0;i<menuResources.length;i++){
         this.addTopMenuIfNeeded(menuResources[i])
-        //create component dynamically
-        //var cp = this.createComponent(this._primaryMenu,ServiceMenuComponent,menuResources[i]) as ComponentRef<ServiceMenuComponent>
-         //this._primaryMenu.insert(cp.hostView);
       }
-
-      /**
-       * create method that
-       * 1) receives a resource
-       * 2) loads the resource
-       * 3) if it has menues, add, else don't
-       */
     });
+
+    this.userNameSource.subscribe(data =>{
+      this.userFirstName = data.result.members.name.value;
+    })
   }
 
   addTopMenuIfNeeded(resource: any){
     var ds = this.http2.get(resource.href).map(x=>x.json());
     ds.subscribe(data=> {
-      //any submenu?
       var parentMenu = this.chooseParentMenu(data);
       let members = data.members;
       let asArray = Object.keys(members).map(function(k) {return members[k]});
@@ -74,6 +73,10 @@ export default class ApplicationComponent{
       var cp = this.createComponent(parentMenu,ServiceMenuComponent,resource) as ComponentRef<ServiceMenuComponent>
       parentMenu.insert(cp.hostView);
     })
+  }
+
+  private setMenuHeader(name: string){
+    this.topMenuNames[name]="name"
   }
 
   public createComponent (vCref: ViewContainerRef, type: any, inputData: any): ComponentRef {
@@ -107,7 +110,13 @@ export default class ApplicationComponent{
         }
         throw ("Unknown menuBar " + menuBar)
     }
+}
 
+//todo: use userprofile service if present
+//https://trello.com/c/i0bTNecz/25-try-to-use-userprofileservice-if-it-exist
+  getTertiartyHeader() : string{
+    return "Hi " + this.userFirstName + "!"
+  }
 }
 
 
