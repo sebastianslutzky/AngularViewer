@@ -36,7 +36,8 @@ export default class ApplicationComponent{
   @ViewChild('primaryMenu') private _primaryMenu: MenuBarComponent;
   @ViewChild('secondaryMenu') private _secondaryMenu: MenuBarComponent;
   @ViewChild('tertiaryMenu') private _tertiaryMenu: MenuBarComponent;
-  private topMenuNames:{[key:string]:string;} ={}
+  private primaryMenuTitle: string;
+  private secondaryMenuTitle: string;
   private userFirstName: string;
   
   constructor(public svc: FxService,
@@ -80,8 +81,14 @@ export default class ApplicationComponent{
         var menuBar = resource.extensions.menuBar
         switch(menuBar){
             case "PRIMARY":
+                if(!this.primaryMenuTitle){
+                  this.primaryMenuTitle = resource.title;
+                }
                 return this._primaryMenu ;
             case "SECONDARY":
+                if(!this.secondaryMenuTitle){
+                  this.secondaryMenuTitle = resource.title;
+                }
                 return this._secondaryMenu ;
             case "TERTIARY":
                 return this._tertiaryMenu ;
