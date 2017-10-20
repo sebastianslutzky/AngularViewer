@@ -7,6 +7,7 @@ import {IMenuResourceLoaded} from '../../events/IMenuResourceLoaded';
   selector: 'menu-bar-section', 
   template: `
 <div >
+    <div *ngIf="!menuLoaded" class="fa fa-spinner fa-spin"></div>
     <div  *ngFor="let action of this.actions">
         <menu-action #ma [hidden]="hidden"[ResourceDescriptor]='action'></menu-action>
     </div>
@@ -24,7 +25,8 @@ export default class MenuBarSectionComponent{
     actions: Array<any>=[];
     @Output()
     onMenuEntityLoaded: EventEmitter<IMenuResourceLoaded> = new EventEmitter();
-
+    menuLoaded: boolean;
+    
     get friendlyName(): String{
         return this.ResourceDescriptor.title
     }
@@ -41,6 +43,7 @@ export default class MenuBarSectionComponent{
             let resourceLoaded: IMenuResourceLoaded = {
                 numberOfSubmenues: asArray.length
             };
+            this.menuLoaded = true;
             this.onMenuEntityLoaded.emit(resourceLoaded);
         });
     }

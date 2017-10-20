@@ -15,6 +15,7 @@ import {HttpClient} from '../../services/httpService';
 @Component({
   selector: 'menu-action',
   template: `<li> 
+        <div *ngIf="!menuLoaded" class="fa fa-spinner fa-spin"></div>
         <a class="menuLink noVeil"  href="#">
             <span class="{{styleIcons(this.friendlyName)}}"> </span>
             <span class="menuLinkLabel">{{this.friendlyName}}</span>
@@ -33,6 +34,7 @@ export default class MenuActionComponent{
 
     @Input()
     ResourceDescriptor: any;
+    menuLoaded: boolean;
 
 
     @Input() 
@@ -114,6 +116,7 @@ export default class MenuActionComponent{
             this.http.get(this.describedBy[0].href).map(res=>res.json())
            .subscribe(describedBy => {
                     this.friendlyName = describedBy.extensions.friendlyName;
+                    this.menuLoaded = true;
                 });
             });
 
