@@ -18,6 +18,7 @@ import {Http,HttpModule,Headers,RequestOptions,RequestMethod,RequestOptionsArgs}
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map" ;
 import { HttpClient } from '../../services/httpService';
+import { MetamodelNavigator } from '../../services/metamodelNavigator';
 import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 import MenuBarComponent from '../../components/menuBar/menuBar';
 
@@ -28,8 +29,6 @@ import MenuBarComponent from '../../components/menuBar/menuBar';
   encapsulation:ViewEncapsulation.None
 })
 export default class ApplicationComponent{ 
-  pageResourceUrl: string= "http://localhost:8080/restful/services/";
-  userNameUrl: string= "http://localhost:8080/restful/services/isissecurity.MeService/actions/me/invoke";
 
   dataSource: Observable<any>; 
   userNameSource: Observable<any>; 
@@ -42,11 +41,12 @@ export default class ApplicationComponent{
   
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
-              private http: Http,public http2: HttpClient){
+              private http: Http,public http2: HttpClient,
+              private metamodel: MetamodelNavigator){
       var invocation = new XMLHttpRequest();
 
-      this.dataSource = this.http2.get(this.pageResourceUrl).map(res=>res.json());
-      this.userNameSource = this.http2.get(this.userNameUrl).map(res=>res.json());
+      this.dataSource = this.http2.get(this.metamodel.getServicesUrl()).map(res=>res.json());
+      this.userNameSource = this.http2.get(this.metamodel.getMeInvocation()).map(res=>res.json());
   }
 
   ngOnInit(){

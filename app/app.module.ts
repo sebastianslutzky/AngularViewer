@@ -10,6 +10,7 @@ import ApplicationComponent from "./components/application/application";
 import FxService from "./services/fxService";
 import {Draggable} from '../node_modules/ng2draggable/draggable.directive';
 import { HttpClient } from './services/httpService';
+import { MetamodelNavigator } from './services/metamodelNavigator';
 
 @NgModule({
     imports:      [ BrowserModule , FormsModule, ReactiveFormsModule, HttpModule],
@@ -17,7 +18,8 @@ import { HttpClient } from './services/httpService';
     providers:    [
                    {provide: LocationStrategy, useClass: HashLocationStrategy},
                    {provide: FxService, useClass: FxService},
-                   {provide: HttpClient, useClass: HttpClient}],
+                   {provide: HttpClient, useClass: HttpClient},
+                   {provide: MetamodelNavigator, useClass: MetamodelNavigator}],
      bootstrap:    [ ApplicationComponent ]
 })
 export class AppModule { }
