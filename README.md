@@ -11,3 +11,14 @@ To explicitly change this open `packages.config` and change the port number in t
     "scripts": {
         "start": "live-server --port=8800"
      }
+
+# Screenshots
+## Home Page 
+### Canvas
+![canvas](screenshots/canvas.png)
+### Primary menu bar
+![primary menu bar](screenshots/primary.png)
+### Secondary menu bar
+![secondary menu bar](screenshots/secondary.png)
+### Tertiary menu bar
+![tertiary menu bar](screenshots/tertiary.png)

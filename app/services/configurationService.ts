@@ -35,7 +35,16 @@ export class ConfigurationService {
         });
     }
 
-    getConfig(key: any):any{
-        return  this._config[key];
+    getConfig(key: any,defaultValue = ""):any{
+        var val:string =   this._config[key];
+        if(!val)
+        {
+            return defaultValue
+        }
+        else
+        {
+            return val;
+        }
+
     }
 }

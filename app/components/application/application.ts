@@ -6,7 +6,7 @@
  * Top Menu (collection): a list of menus listed in the services resource.
  * If one of the Top Menus emits the event onTopMenuObsolete, the top menu will be removed from the DOM
  * 
- *  @WebResources
+ *  @configurationService
  *  /services
  * 
  */
@@ -19,6 +19,7 @@ import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map" ;
 import { HttpClient2 } from '../../services/httpService';
 import { MetamodelNavigator } from '../../services/metamodelNavigator';
+import { ConfigurationService } from '../../services/configurationService';
 import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 import MenuBarComponent from '../../components/menuBar/menuBar';
 
@@ -38,15 +39,18 @@ export default class ApplicationComponent{
   private primaryMenuTitle: string;
   private secondaryMenuTitle: string;
   private userFirstName: string;
+  private appName: string;
   
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
               private http: Http,public http2: HttpClient2,
-              private metamodel: MetamodelNavigator){
+              private metamodel: MetamodelNavigator,
+            private config: ConfigurationService){
       var invocation = new XMLHttpRequest();
 
       this.dataSource = this.http2.get(this.metamodel.getServicesUrl()).map(res=>res.json());
       this.userNameSource = this.http2.get(this.metamodel.getMeInvocation()).map(res=>res.json());
+      this.appName = config.getConfig("applicationName","nada")
   }
 
   ngOnInit(){
