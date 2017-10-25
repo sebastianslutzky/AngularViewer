@@ -17,7 +17,7 @@ import FxService from  "../../services/fxService";
 import {Http,HttpModule,Headers,RequestOptions,RequestMethod,RequestOptionsArgs} from "@angular/http";
 import {Observable} from "rxjs/Observable";
 import "rxjs/add/operator/map" ;
-import { HttpClient } from '../../services/httpService';
+import { HttpClient2 } from '../../services/httpService';
 import { MetamodelNavigator } from '../../services/metamodelNavigator';
 import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 import MenuBarComponent from '../../components/menuBar/menuBar';
@@ -41,7 +41,7 @@ export default class ApplicationComponent{
   
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
-              private http: Http,public http2: HttpClient,
+              private http: Http,public http2: HttpClient2,
               private metamodel: MetamodelNavigator){
       var invocation = new XMLHttpRequest();
 
@@ -61,6 +61,7 @@ export default class ApplicationComponent{
     this.userNameSource.subscribe(data =>{
       this.userFirstName = data.result.members.name.value;
     })
+
   }
 
   addTopMenuIfNeeded(resource: any){

@@ -3,7 +3,7 @@ import {Http,Headers,RequestOptions} from "@angular/http";
 
 
 @Injectable()
-export class HttpClient {
+export class HttpClient2 {
 
   constructor(private http: Http) {}
 

@@ -1,5 +1,5 @@
 import {NgModule,Component, Injector,ViewEncapsulation, Input, Output, EventEmitter} from '@angular/core';
-import {HttpClient} from '../../services/httpService';
+import {HttpClient2} from '../../services/httpService';
 import {Observable} from "rxjs/Observable";
 import {IMenuResourceLoaded} from '../../events/IMenuResourceLoaded';
 
@@ -31,7 +31,7 @@ export default class MenuBarSectionComponent{
         return this.ResourceDescriptor.title
     }
 
-    constructor(private http: HttpClient){}
+    constructor(private http: HttpClient2){}
 
     ngOnInit(){
         this.dataSource = this.http.get(this.ResourceDescriptor.href).map(x=>x.json());

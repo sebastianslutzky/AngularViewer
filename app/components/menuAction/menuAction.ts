@@ -10,7 +10,7 @@
 import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Observable} from "rxjs/Observable";
-import {HttpClient} from '../../services/httpService';
+import {HttpClient2} from '../../services/httpService';
 
 @Component({
   selector: 'menu-action',
@@ -102,7 +102,7 @@ export default class MenuActionComponent{
          return ""
     }
 
-    constructor(private http: HttpClient){}
+    constructor(private http: HttpClient2){}
 
 
     ngOnInit(){

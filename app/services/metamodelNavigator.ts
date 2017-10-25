@@ -1,4 +1,6 @@
 import {Injectable} from "@angular/core";
+import { HttpClient2 } from '../services/httpService';
+import { ConfigurationService } from '../services/configurationService';
 
 
 @Injectable()
@@ -6,9 +8,13 @@ export class MetamodelNavigator {
 
     private rootUrl:string;
 
-    constructor(){ 
+    constructor(private http: HttpClient2,private config: ConfigurationService){ 
         //todo: get from configuration service
-        this.rootUrl = "http://localhost:8080/restful";
+        var host = this.config.getConfig("host");
+        var port = this.config.getConfig("port");
+        var apiRoot = this.config.getConfig("apiRoot");
+
+        this.rootUrl = "http://" + host + ":" + port + "/" + apiRoot;
     }
 
     private buildUrl(endpoint: string): string{

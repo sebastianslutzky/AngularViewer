@@ -9,17 +9,21 @@ import {myComponents} from "./componentList";
 import ApplicationComponent from "./components/application/application";
 import FxService from "./services/fxService";
 import {Draggable} from '../node_modules/ng2draggable/draggable.directive';
-import { HttpClient } from './services/httpService';
+import { HttpClient2 } from './services/httpService';
 import { MetamodelNavigator } from './services/metamodelNavigator';
+import { APP_INITIALIZER } from '@angular/core';
+import { ConfigurationService } from './services/configurationService';
 
 @NgModule({
     imports:      [ BrowserModule , FormsModule, ReactiveFormsModule, HttpModule],
     declarations: [...myComponents],
     providers:    [
+                    {provide: APP_INITIALIZER, useFactory:(config: ConfigurationService)=>()=>config.load(),deps: [ConfigurationService], multi: true},
                    {provide: LocationStrategy, useClass: HashLocationStrategy},
                    {provide: FxService, useClass: FxService},
-                   {provide: HttpClient, useClass: HttpClient},
-                   {provide: MetamodelNavigator, useClass: MetamodelNavigator}],
+                   {provide: MetamodelNavigator, useClass: MetamodelNavigator},
+                   {provide: HttpClient2, useClass: HttpClient2},
+                   {provide: ConfigurationService, useClass: ConfigurationService}],
      bootstrap:    [ ApplicationComponent ]
 })
 export class AppModule { }
