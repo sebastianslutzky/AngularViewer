@@ -22,9 +22,10 @@ import { MetamodelNavigator } from '../../services/metamodelNavigator';
 import { ConfigurationService } from '../../services/configurationService';
 import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 import MenuBarComponent from '../../components/menuBar/menuBar';
+declare var $:JQueryStatic;
 
 @Component({
-  selector: 'auction-application', // <1>
+  selector: 'application', // <1>
   templateUrl: 'app/components/application/application.html', // <3>
   styleUrls: ['app/components/application/application.css'], // <4>
   encapsulation:ViewEncapsulation.None
@@ -50,10 +51,13 @@ export default class ApplicationComponent{
 
       this.dataSource = this.http2.get(this.metamodel.getServicesUrl()).map(res=>res.json());
       this.userNameSource = this.http2.get(this.metamodel.getMeInvocation()).map(res=>res.json());
-      this.appName = config.getConfig("applicationName","nada")
+      this.appName = config.getConfig("applicationName","Home Page")
   }
 
   ngOnInit(){
+
+    $('title').text(this.config.getConfig("pageTitle"),"Home Page");
+
     this.dataSource.subscribe(data =>{
       var menuResources: Array<any> = data.value;
 

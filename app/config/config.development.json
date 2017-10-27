@@ -2,5 +2,6 @@
     "host": "localhost",
     "port": "8080",
     "apiRoot": "restful",
-    "applicationName": "ECP Contacts App"
+    "applicationName": "ECP Contacts App",
+    "pageTitle": "Contact Groups - Angular Vwr"
 }
