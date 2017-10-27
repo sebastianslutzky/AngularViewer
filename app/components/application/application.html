@@ -6,20 +6,9 @@
             <a tabindex="-1" class="navbar-brand" href="."><span>{{appName}} </span></a>
           </div>
           <div class="navbar-collapse app-actions collapse navbar-left" >
-            <ul class="nav navbar-nav primary">
-               <li class="dropdown">
-                  <a tabindex="-1" 
-                      href="javascript:;" 
-                      class="dropdown-toggle" 
-                      data-toggle="dropdown" >
-                      <span>{{primaryMenuTitle}}</span> 
-                <span class="caret"></span></a>
-                <ul class="dropdown-menu scrollable-menu multi-level top-menu-contacts" role="menu">
-                <menu-bar #primaryMenu ></menu-bar>
-                </ul>
-              </li>
-            </ul>
+                  <menu-bar *ngIf="primaryResource" #primaryMenu [Resource]='primaryResource'></menu-bar>
           </div>
+          <!--
           <div class="navbar-collapse app-actions collapse navbar-right">
               <ul class="nav navbar-nav secondary">
 
@@ -52,6 +41,7 @@
               </li>
               </ul>
             </div>
+      -->
         </div>
     </header>
 </div>

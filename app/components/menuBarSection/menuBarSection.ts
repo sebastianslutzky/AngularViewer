@@ -31,7 +31,9 @@ export default class MenuBarSectionComponent{
         return this.ResourceDescriptor.title
     }
 
-    constructor(private http: HttpClient2){}
+    constructor(private http: HttpClient2){
+        console.log("constr of menuBarSection")
+    }
 
     ngOnInit(){
         this.dataSource = this.http.get(this.ResourceDescriptor.href).map(x=>x.json());

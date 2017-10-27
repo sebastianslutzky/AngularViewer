@@ -33,6 +33,7 @@ declare var $:JQueryStatic;
 export default class ApplicationComponent{ 
 
   dataSource: Observable<any>; 
+  menusDataSource: Observable<any>; 
   userNameSource: Observable<any>; 
   @ViewChild('primaryMenu') private _primaryMenu: MenuBarComponent;
   @ViewChild('secondaryMenu') private _secondaryMenu: MenuBarComponent;
@@ -41,6 +42,8 @@ export default class ApplicationComponent{
   private secondaryMenuTitle: string;
   private userFirstName: string;
   private appName: string;
+
+  public primaryResource: any;
   
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
@@ -50,14 +53,22 @@ export default class ApplicationComponent{
       var invocation = new XMLHttpRequest();
 
       this.dataSource = this.http2.get(this.metamodel.getServicesUrl()).map(res=>res.json());
+      this.menusDataSource = this.http2.get("http://localhost:8080/restful/menuBars");
       this.userNameSource = this.http2.get(this.metamodel.getMeInvocation()).map(res=>res.json());
       this.appName = config.getConfig("applicationName","Home Page")
   }
 
+
   ngOnInit(){
 
     $('title').text(this.config.getConfig("pageTitle"),"Home Page");
-
+    //TODO: move to ResourceLoaderService
+    //get menu
+    this.menusDataSource.subscribe(data => {
+       var menubars = new X2JS().xml_str2json(data._body).menuBars;
+       this.primaryResource = menubars.secondary.menu;
+    });
+    /*
     this.dataSource.subscribe(data =>{
       var menuResources: Array<any> = data.value;
 
@@ -70,6 +81,8 @@ export default class ApplicationComponent{
       this.userFirstName = data.result.members.name.value;
     })
 
+
+    */
   }
 
   addTopMenuIfNeeded(resource: any){
