@@ -13,6 +13,7 @@ import { HttpClient2 } from './services/httpService';
 import { MetamodelNavigator } from './services/metamodelNavigator';
 import { APP_INITIALIZER } from '@angular/core';
 import { ConfigurationService } from './services/configurationService';
+import { ActionInvokerService } from './services/actionInvokerService';
 
 @NgModule({
     imports:      [ BrowserModule , FormsModule, ReactiveFormsModule, HttpModule],
@@ -23,7 +24,9 @@ import { ConfigurationService } from './services/configurationService';
                    {provide: FxService, useClass: FxService},
                    {provide: MetamodelNavigator, useClass: MetamodelNavigator},
                    {provide: HttpClient2, useClass: HttpClient2},
-                   {provide: ConfigurationService, useClass: ConfigurationService}],
+                   {provide: ConfigurationService, useClass: ConfigurationService},
+                   {provide: ActionInvokerService, useClass: ActionInvokerService},
+                ],
      bootstrap:    [ ApplicationComponent ]
 })
 export class AppModule { }

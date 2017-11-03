@@ -112,6 +112,3 @@ export default class ApplicationComponent{
     return "Hi " + this.userFirstName + "!"
   }
 }
-
-
-

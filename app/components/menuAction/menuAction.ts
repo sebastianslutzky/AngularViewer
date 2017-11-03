@@ -11,12 +11,13 @@ import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter} from
 import {RouterModule, Routes} from '@angular/router';
 import {Observable} from "rxjs/Observable";
 import {HttpClient2} from '../../services/httpService';
-
+import { ActionInvokerService } from '../../services/actionInvokerService';
+import {IRestResource,IResourceLink, MetamodelNavigator } from '../../services/metamodelNavigator';
 @Component({
   selector: 'menu-action',
   template: `<li> 
         <div *ngIf="!menuLoaded" class="fa fa-spinner fa-spin"></div>
-        <a class="menuLink noVeil"  href="#">
+        <a  (click)="invokeMethod()" class="menuLink noVeil"  href="#">
             <span class="{{styleIcons(this.friendlyName)}}"> </span>
             <span class="menuLinkLabel">{{this.friendlyName}}</span>
         </a></li>`,
@@ -29,8 +30,8 @@ export default class MenuActionComponent{
     actionName: string;
     friendlyName: string;
     dataSource: Observable<any>; 
-    fullResource: string;
-    describedBy: any;
+    fullResource: IRestResource;
+    describedBy: IResourceLink;
 
     @Input()
     ResourceDescriptor: any;
@@ -46,12 +47,12 @@ export default class MenuActionComponent{
     @Output()
     actionInvoked: EventEmitter<IActionInvocationRequest> = new EventEmitter();
 
-    invokeMethod(){
-        let actionInvocation: IActionInvocationRequest = {
-            actionName: this.ActionName 
-        }
+    constructor(private invoker: ActionInvokerService, private http: HttpClient2, private metamodel: MetamodelNavigator){
 
-        this.actionInvoked.emit(actionInvocation)
+    }
+
+    invokeMethod(){
+        this.invoker.invokeAction(this.fullResource);
     }
 
 
@@ -102,23 +103,22 @@ export default class MenuActionComponent{
          return ""
     }
 
-    constructor(private http: HttpClient2){}
 
 
     ngOnInit(){
-        this.dataSource = this.http.get(this.ResourceDescriptor.links[0].href).map(x=>x.json());
+        //TODO: use details rels instead of index 0
+        var details = this.metamodel.getDetails(this.ResourceDescriptor);
+        this.dataSource = this.http.get(details.href).map(x=>x.json());
 
         this.dataSource.subscribe(data=>
             {
-            this.fullResource = data.links;
-            let links: Array<any> = data.links;
-            this.describedBy = data.links.filter(function(item: any){return item.rel == "describedby"});
-            this.http.get(this.describedBy[0].href).map(res=>res.json())
+            this.fullResource = data;
+            this.describedBy = this.metamodel.getDescribedBy(this.fullResource);
+            this.http.get(this.describedBy.href).map(res=>res.json())
            .subscribe(describedBy => {
                     this.friendlyName = describedBy.extensions.friendlyName;
                     this.menuLoaded = true;
                 });
             });
-
     }
 }

@@ -25,9 +25,36 @@ export class MetamodelNavigator {
         return this.buildUrl("services");
     }
 
+
+    //todo: find user service from home page (with rels)http://localhost:8080/restful/user
     public getMeInvocation():string{
         return  this.buildUrl("services/isissecurity.MeService/actions/me/invoke");
     }
 
+    public getFromRel(resource: IRestResource, rel: string): IResourceLink{
+        var link: IResourceLink =  resource.links.filter(function(item:any){return item.rel.startsWith(rel)})[0];
+        if(!link){
+            //uncomment to debug bad rel
+            //console.log("resource not found:" + rel);
+            //console.log(resource);
+        }
+        return link;
+    }
 
+    public getDescribedBy(resource:IRestResource):IResourceLink{
+        return this.getFromRel(resource,"describedby")
+    }
+
+    public getDetails(resource:IRestResource):IResourceLink{
+        return this.getFromRel(resource,"urn:org.restfulobjects:rels/details")
+    }
+}
+
+export interface IResourceLink{
+    rel:string;
+    href: string;
+}
+
+export interface IRestResource{
+    links:IResourceLink[];
 }
