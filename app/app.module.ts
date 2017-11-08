@@ -7,6 +7,7 @@ import { ReactiveFormsModule} from '@angular/forms';
 import {LocationStrategy, HashLocationStrategy} from '@angular/common';
 import {myComponents} from "./componentList";
 import ApplicationComponent from "./components/application/application";
+import EntityComponent from "./components/entity/entity";
 import FxService from "./services/fxService";
 import {Draggable} from '../node_modules/ng2draggable/draggable.directive';
 import { HttpClient2 } from './services/httpService';
@@ -27,6 +28,9 @@ import { ActionInvokerService } from './services/actionInvokerService';
                    {provide: ConfigurationService, useClass: ConfigurationService},
                    {provide: ActionInvokerService, useClass: ActionInvokerService},
                 ],
-     bootstrap:    [ ApplicationComponent ]
+     bootstrap:    [ ApplicationComponent ],
+     entryComponents: [EntityComponent]
+
+
 })
 export class AppModule { }

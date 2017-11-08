@@ -22,6 +22,9 @@ import { MetamodelNavigator } from '../../services/metamodelNavigator';
 import { ConfigurationService } from '../../services/configurationService';
 import IMenuResourceLoaded from '../../events/IMenuResourceLoaded';
 import MenuBarComponent from '../../components/menuBar/menuBar';
+import { ActionInvokerService } from '../../services/actionInvokerService';
+import EntityComponent from "../../components/entity/entity"
+  
 declare var $:JQueryStatic;
 
 @Component({
@@ -41,21 +44,35 @@ export default class ApplicationComponent{
   private secondaryMenuTitle: string;
   private userFirstName: string;
   private appName: string;
+
+  @ViewChild('desktop', {read: ViewContainerRef}) private _desktop: ElementRef;
+
   
   constructor(public svc: FxService,
               private _cmpFctryRslvr: ComponentFactoryResolver,
               private http: Http,public http2: HttpClient2,
               private metamodel: MetamodelNavigator,
-            private config: ConfigurationService){
+            private config: ConfigurationService,
+            private invoke: ActionInvokerService){
       var invocation = new XMLHttpRequest();
 
       this.dataSource = this.http2.get(this.metamodel.getServicesUrl()).map(res=>res.json());
       this.userNameSource = this.http2.get(this.metamodel.getMeInvocation()).map(res=>res.json());
       this.appName = config.getConfig("applicationName","Home Page")
+      invoke.actionInvoked.subscribe(data=>{
+        //TODO: create a draggable (serch in git history) and display and empty one
+        // then, render lists. check wicket viewer for inspiration (grid view?) 
+        //      list in test first
+        //       display a grid (kendoUI?) 
+        //      fill up grid
+        console.log(data.Arg)
+        let comp = this.createComponent(this._desktop,EntityComponent)
+        this._desktop.insert(comp.hostView)
+        }
+      )
   }
 
   ngOnInit(){
-
     $('title').text(this.config.getConfig("pageTitle"),"Home Page");
 
     this.dataSource.subscribe(data =>{
@@ -69,7 +86,6 @@ export default class ApplicationComponent{
     this.userNameSource.subscribe(data =>{
       this.userFirstName = data.result.members.name.value;
     })
-
   }
 
   addTopMenuIfNeeded(resource: any){
@@ -111,4 +127,17 @@ export default class ApplicationComponent{
   getTertiartyHeader() : string{
     return "Hi " + this.userFirstName + "!"
   }
+
+  public createComponent (vCref: ViewContainerRef, type: any): ComponentRef {
+    
+        let factory = this._cmpFctryRslvr.resolveComponentFactory(type);
+    
+        // vCref is needed cause of that injector..
+        let injector = ReflectiveInjector.fromResolvedProviders([], vCref.parentInjector);
+    
+        // create component without adding it directly to the DOM
+        let comp = factory.create(injector);
+    
+        return comp;
+      }
 }

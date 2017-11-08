@@ -4,6 +4,7 @@ import MenuBarSectionComponent from './components/menuBarSection/menuBarSection'
 import MenuActionComponent from './components/menuAction/menuAction';
 import Footer from './components/footer/footer';
 import {Draggable} from 'node_modules/ng2draggable/draggable.directive.ts';
+import EntityComponent from './components/entity/entity';
 
 export const myComponents=[
                     ApplicationComponent,
@@ -11,6 +12,7 @@ export const myComponents=[
                     MenuBarSectionComponent,
                     MenuActionComponent,
                     Draggable,
+                    EntityComponent, 
                     Footer
                     ]
 

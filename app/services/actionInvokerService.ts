@@ -1,26 +1,40 @@
-import {Injectable} from '@angular/core';
+import {Injectable,Output,EventEmitter} from '@angular/core';
 import { HttpClient2 } from '../services/httpService';
+import { MetamodelNavigator ,IResourceLink} from '../services/metamodelNavigator';
 
 @Injectable()
 export class ActionInvokerService {
-    constructor(private http: HttpClient2){
+    constructor(private http: HttpClient2,private metamodel: MetamodelNavigator){
     }
+
+    @Output()
+    actionInvoked: EventEmitter<IActionInvoked> =new EventEmitter();
 
     public invokeAction(actionResource: any): any{
-        console.log("invoking....");
-        console.log(actionResource);
-        console.log(actionResource.links[0].method)
-        var link = actionResource.links[0];
+        var invoke: IResourceLink = this.metamodel.getInvoke(actionResource);
 
-        var url: string = link.href;
-        var method: string = link.method;
-        //TODO:use method variable instead
-        this.http.get(url);
-        //TODO NEXT:
-        /**
-         * 1 - do get call to get action resource
-         * 2 - invoke action calling action invoke
-         * 3 - change logic to that action resource is fully loaded by menuaction (after rendering)
-         */
+        if(this.metamodel.isGET(invoke)){
+            this.http.get(invoke.href).map(x=>x.json()). subscribe(data=>
+             {
+                 let arg = new ActionInvokedArg();
+                 arg.Result = data;
+
+                let argument: IActionInvoked = {
+                    Arg : arg
+                }
+
+            this.actionInvoked.emit(argument)
+            };
+            return null;
+        }
+        throw `Only GET invocations supported, not ...${invoke.method}`
     }
+}
+
+export class ActionInvokedArg{
+    Result: any;
+}
+
+export interface IActionInvoked{
+    Arg: ActionInvokedArg
 }

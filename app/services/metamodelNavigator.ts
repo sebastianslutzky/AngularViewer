@@ -3,7 +3,7 @@ import { HttpClient2 } from '../services/httpService';
 import { ConfigurationService } from '../services/configurationService';
 
 
-@Injectable()
+@Injectable()   
 export class MetamodelNavigator {
 
     private rootUrl:string;
@@ -24,7 +24,6 @@ export class MetamodelNavigator {
     public getServicesUrl(): string{
         return this.buildUrl("services");
     }
-
 
     //todo: find user service from home page (with rels)http://localhost:8080/restful/user
     public getMeInvocation():string{
@@ -48,11 +47,24 @@ export class MetamodelNavigator {
     public getDetails(resource:IRestResource):IResourceLink{
         return this.getFromRel(resource,"urn:org.restfulobjects:rels/details")
     }
+
+    public getInvoke(resource:IRestResource):IResourceLink{
+        return this.getFromRel(resource,"urn:org.restfulobjects:rels/invoke")
+    }
+
+    public isGET(link: IResourceLink){
+        return link.method === "GET";
+    }
+
+    public isPOST(link: IResourceLink){
+        return link.method === "POST";
+    }
 }
 
 export interface IResourceLink{
     rel:string;
     href: string;
+    method: string;
 }
 
 export interface IRestResource{

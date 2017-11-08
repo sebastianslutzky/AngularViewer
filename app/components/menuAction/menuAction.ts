@@ -7,7 +7,7 @@
  *  actionInvoked
  */
 
-import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter} from '@angular/core';
+import {NgModule,Component, ViewEncapsulation, Input} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {Observable} from "rxjs/Observable";
 import {HttpClient2} from '../../services/httpService';
@@ -43,9 +43,6 @@ export default class MenuActionComponent{
         this.actionName = actionName;
         this.friendlyName = actionName;
     }
-
-    @Output()
-    actionInvoked: EventEmitter<IActionInvocationRequest> = new EventEmitter();
 
     constructor(private invoker: ActionInvokerService, private http: HttpClient2, private metamodel: MetamodelNavigator){
 
@@ -106,7 +103,7 @@ export default class MenuActionComponent{
 
 
     ngOnInit(){
-        //TODO: use details rels instead of index 0
+        //todo: move http calls to metamodel (metamodel.getDetails())
         var details = this.metamodel.getDetails(this.ResourceDescriptor);
         this.dataSource = this.http.get(details.href).map(x=>x.json());
 
