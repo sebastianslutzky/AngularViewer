@@ -60,13 +60,7 @@ export default class ApplicationComponent{
       this.userNameSource = this.http2.get(this.metamodel.getMeInvocation()).map(res=>res.json());
       this.appName = config.getConfig("applicationName","Home Page")
       invoke.actionInvoked.subscribe(data=>{
-        //TODO: create a draggable (serch in git history) and display and empty one
-        // then, render lists. check wicket viewer for inspiration (grid view?) 
-        //      list in test first
-        //       display a grid (kendoUI?) 
-        //      fill up grid
-        console.log(data.Arg)
-        let comp = this.createComponent(this._desktop,EntityComponent)
+        let comp = this.createComponent(this._desktop,EntityComponent,{"actionResource":data.Arg})
         this._desktop.insert(comp.hostView)
         }
       )
@@ -128,12 +122,15 @@ export default class ApplicationComponent{
     return "Hi " + this.userFirstName + "!"
   }
 
-  public createComponent (vCref: ViewContainerRef, type: any): ComponentRef {
-    
+  public createComponent (vCref: ViewContainerRef, type: any, inputData: any = []): ComponentRef {
+    let inputProviders = Object.keys(inputData).map((inputName) => {
+      return {
+        provide: inputName, useValue: inputData[inputName]};}); 
         let factory = this._cmpFctryRslvr.resolveComponentFactory(type);
     
+        let  resolvedInputs = ReflectiveInjector.resolve(inputProviders);
         // vCref is needed cause of that injector..
-        let injector = ReflectiveInjector.fromResolvedProviders([], vCref.parentInjector);
+        let injector = ReflectiveInjector.fromResolvedProviders(resolvedInputs, vCref.parentInjector);
     
         // create component without adding it directly to the DOM
         let comp = factory.create(injector);

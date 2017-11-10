@@ -1,18 +1,19 @@
 import {Injectable,Output,EventEmitter} from '@angular/core';
 import { HttpClient2 } from '../services/httpService';
-import { MetamodelNavigator ,IResourceLink} from '../services/metamodelNavigator';
+import { MetamodelNavigator ,IResourceLink, IRestResource, IActionResultResource} from '../services/metamodelNavigator';
 
 @Injectable()
 export class ActionInvokerService {
-    constructor(private http: HttpClient2,private metamodel: MetamodelNavigator){
-    }
+    constructor(private http: HttpClient2,private metamodel: MetamodelNavigator){}
 
     @Output()
     actionInvoked: EventEmitter<IActionInvoked> =new EventEmitter();
 
-    public invokeAction(actionResource: any): any{
+    //TODO: it will need to receive the full resource (including describedBy link, to get params)
+    public invokeAction(actionResource: IRestResource): any{
         var invoke: IResourceLink = this.metamodel.getInvoke(actionResource);
 
+        //Action invocation (will need to be a safe call, with proper error handling)
         if(this.metamodel.isGET(invoke)){
             this.http.get(invoke.href).map(x=>x.json()). subscribe(data=>
              {
@@ -24,7 +25,7 @@ export class ActionInvokerService {
                 }
 
             this.actionInvoked.emit(argument)
-            };
+            })
             return null;
         }
         throw `Only GET invocations supported, not ...${invoke.method}`
@@ -32,7 +33,7 @@ export class ActionInvokerService {
 }
 
 export class ActionInvokedArg{
-    Result: any;
+    Result: IActionResultResource;
 }
 
 export interface IActionInvoked{

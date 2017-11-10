@@ -33,9 +33,7 @@ export class MetamodelNavigator {
     public getFromRel(resource: IRestResource, rel: string): IResourceLink{
         var link: IResourceLink =  resource.links.filter(function(item:any){return item.rel.startsWith(rel)})[0];
         if(!link){
-            //uncomment to debug bad rel
-            //console.log("resource not found:" + rel);
-            //console.log(resource);
+            throw('rel not found: ' + rel)
         }
         return link;
     }
@@ -69,4 +67,10 @@ export interface IResourceLink{
 
 export interface IRestResource{
     links:IResourceLink[];
+}
+
+
+export interface IActionResultResource extends IRestResource{
+    resulttype: string;
+    result: IResourceLink[];
 }

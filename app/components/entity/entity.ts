@@ -1,7 +1,7 @@
 
-import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter} from '@angular/core';
+import {NgModule,Component, ViewEncapsulation, Input, Output, EventEmitter,Injector} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
-
+import { MetamodelNavigator,IRestResource } from '../../services/metamodelNavigator';
 
 @Component({
   selector: 'entity', // <1>
@@ -9,4 +9,10 @@ import {RouterModule, Routes} from '@angular/router';
   encapsulation:ViewEncapsulation.None
 })
 export default class EntityComponent{ 
+  _resource:IRestResource
+
+  constructor(public injector: Injector){
+    this._resource = this.injector.get('actionResource');
+    
+  }
 }
