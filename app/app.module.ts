@@ -15,6 +15,7 @@ import { MetamodelNavigator } from './services/metamodelNavigator';
 import { APP_INITIALIZER } from '@angular/core';
 import { ConfigurationService } from './services/configurationService';
 import { ActionInvokerService } from './services/actionInvokerService';
+import {CUSTOM_ELEMENTS_SCHEMA} from '@angular/core'
 
 @NgModule({
     imports:      [ BrowserModule , FormsModule, ReactiveFormsModule, HttpModule],
@@ -29,6 +30,7 @@ import { ActionInvokerService } from './services/actionInvokerService';
                    {provide: ActionInvokerService, useClass: ActionInvokerService},
                 ],
      bootstrap:    [ ApplicationComponent ],
+     schemas: [CUSTOM_ELEMENTS_SCHEMA],
      entryComponents: [EntityComponent]
 
 

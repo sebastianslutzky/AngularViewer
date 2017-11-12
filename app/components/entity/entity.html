@@ -1,1 +1,12 @@
-<div [ng2-draggable]="true"> <h1><b> Entity!!!</b></h1></div>
+<div [ng2-draggable]="true"> 
+<ng-table [config]="config" [columns]='columns'>
+        <table class="table table-bordereld">
+                <tbody> 
+                  <tr *ngFor="let row of rows"> 
+                      <td *ngFor="let column of columns">
+                              {{row[column["name"]]}}
+                      </td>
+                   </tr> </tbody>
+              </table>
+</ng-table>
+</div>

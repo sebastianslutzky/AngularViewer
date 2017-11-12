@@ -15,16 +15,18 @@ export class ActionInvokerService {
 
         //Action invocation (will need to be a safe call, with proper error handling)
         if(this.metamodel.isGET(invoke)){
-            this.http.get(invoke.href).map(x=>x.json()). subscribe(data=>
+            this.http.get(invoke.href,true).map(x=>x.json()). subscribe(data=>
              {
                  let arg = new ActionInvokedArg();
                  arg.Result = data;
 
-                let argument: IActionInvoked = {
+                let event: IActionInvoked = {
                     Arg : arg
                 }
 
-            this.actionInvoked.emit(argument)
+                console.log(data);
+
+            this.actionInvoked.emit(event)
             })
             return null;
         }

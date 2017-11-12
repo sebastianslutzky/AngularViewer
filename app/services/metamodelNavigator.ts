@@ -71,6 +71,36 @@ export interface IRestResource{
 
 
 export interface IActionResultResource extends IRestResource{
-    resulttype: string;
-    result: IResourceLink[];
+    resulttype: string
+    result: IResourceLink[]
+}
+
+export interface IXActionResultListItem {
+    $$href: string
+    $$title: string
+    $$intanceId: string
+}
+
+export class XActionResultList{
+   XListItems: IXActionResultListItem[]
+   PropertyNames: string[]
+   ROResult: IActionResultResource 
+
+
+   constructor(result: any[]){
+      this.ROResult = result.splice(-1,1)[0].$$ro;
+      this.XListItems = result
+
+      this.PropertyNames = this.getPropertyNames()
+   }
+
+   private getPropertyNames() :string[]{
+      if(this.XListItems.length == 0){
+          return [] 
+      }
+
+      //get names from first item
+      let allKeys = Object.keys(this.XListItems[0])
+      return allKeys.filter(function(item:string){return !item.startsWith('$$')})
+   }
 }
