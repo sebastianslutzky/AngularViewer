@@ -1,12 +1,12 @@
 <div [ng2-draggable]="true"> 
-<ng-table [config]="config" [columns]='columns'>
-        <table class="table table-bordereld">
+<ng-table [config]="config" [columns]='columns' >
+         <table class="table table-bordereld table-striped">
                 <tbody> 
                   <tr *ngFor="let row of rows"> 
                       <td *ngFor="let column of columns">
                               {{row[column["name"]]}}
                       </td>
                    </tr> </tbody>
-              </table>
+              </table> 
 </ng-table>
 </div>
